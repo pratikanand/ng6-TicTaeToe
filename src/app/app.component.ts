@@ -13,6 +13,7 @@ export class AppComponent  {
   gameResultText: string;
 
   playerInputPositions = [];
+  // these combinations results in a winner!
   winningInputPositions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -30,12 +31,14 @@ export class AppComponent  {
   constructor() { }
 
   initGame() {
+    // creating an array having 9 elements marking the 9 positions in the matrix, init all with null values
     for (let i = 0; i < 9; i++) {
       this.playerInputPositions[i] = null;
     }
     this.activePlayer = this.PLAYER_1;
   }
 
+  // this method generates and returns a random index from the null valued positions in the matrix
   generateComputerFeedPosition() {
     const vacantPositions = [];
     this.playerInputPositions.forEach((x, index) => {
@@ -47,43 +50,56 @@ export class AppComponent  {
   }
 
   onPlayerInput(index: number) {
-    console.log(this.activePlayer);
+    // console.log(this.activePlayer);
     if (this.playerInputPositions[index] || this.gameOver) {
+      // to prevent overwriting against the 'index' in matrix, if that position is already occupied/defined
       return;
     }
     this.playerInputPositions[index] = this.activePlayer;
+    // checking whether game came to end with a winner/draw or not
     const gameResult = this.checkGameResult();
     if (gameResult) {
-      console.log("Game Result: ", this.gameResultText);
+      // console.log("Game Result: ", this.gameResultText);
       return;
     }
     this.activePlayer = this.activePlayer === this.PLAYER_2 ? this.PLAYER_1 : this.PLAYER_2;
+    // conputer as 'player 2' functioanlity starts here
     if (this.isUserPlayingAgainstComputer) {
       const computerFeedIndex = this.generateComputerFeedPosition();
       if (computerFeedIndex !== null) {
         this.playerInputPositions[computerFeedIndex] = this.PLAYER_2;
         const gameResult = this.checkGameResult();
         if (gameResult) {
-          console.log("Game Result: ", this.gameResultText);
+          // console.log("Game Result: ", this.gameResultText);
           return;
         }
         this.activePlayer = this.PLAYER_1;
       }
+      // conputer as 'player 2' functioanlity ends here
     }
-    console.log(this.playerInputPositions);
+    // console.log(this.playerInputPositions);
   }
 
   checkGameResult() {
+    // checking if any of the input types('x' or 'o') satisfies the game winner position criteria
     for (let positionSet of this.winningInputPositions) {
       const isWinner = positionSet.every((v, i, a) => {
         return this.playerInputPositions[v] === this.playerInputPositions[a[0]] && this.playerInputPositions[v];
       })
       if (isWinner) {
         this.gameOver = true;
-        this.gameResultText = this.playerInputPositions[positionSet[0]] === this.PLAYER_2 && this.isUserPlayingAgainstComputer ? 'Computer Wins!' : (this.playerInputPositions[positionSet[0]] === this.PLAYER_1 && this.isUserPlayingAgainstComputer ? 'You Win!' : `${this.playerInputPositions[positionSet[0]]} Wins!`);
+        // generating text for game result, for binding to template
+        if (this.isUserPlayingAgainstComputer && this.playerInputPositions[positionSet[0]] === this.PLAYER_2) {
+          this.gameResultText = 'Computer Wins!';
+        } else if (this.isUserPlayingAgainstComputer && this.playerInputPositions[positionSet[0]] === this.PLAYER_1) {
+          this.gameResultText = 'You Win!';
+        } else {
+          this.gameResultText = `${this.playerInputPositions[positionSet[0]]} Wins!`;
+        }
         return true;
       }
     }
+    // checking for a tie
     if (this.playerInputPositions.every(c => c !== null)) {
       this.gameOver = true;
       this.gameResultText = 'It\'s a Tie!';
