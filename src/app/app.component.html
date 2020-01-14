@@ -1,0 +1,51 @@
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">TicTacToe!</h1>
+    <p class="lead">Welcome player! Select your opponent and click 'Start game!'></p>
+    <div class="btn-group btn-group-justified" [ngStyle]="{'cursor': !playerInputPositions.length ? 'pointer' : 'not-allowed'}">
+      <a class="btn btn-primary"
+        [ngClass]="{ active: !isUserPlayingAgainstComputer, disabled: playerInputPositions.length }"
+        (click)="isUserPlayingAgainstComputer = false">Play against Human!</a>
+      <a class="btn btn-primary"
+        [ngClass]="{ active: isUserPlayingAgainstComputer, disabled: playerInputPositions.length }"
+        (click)="isUserPlayingAgainstComputer = true">Play against Computer!</a>
+    </div>
+
+    <p>
+      You are 'Player 1' and will be playing against
+      {{ isUserPlayingAgainstComputer ? "'Computer'" : "'Player 2'" }}
+    </p>
+
+    <button type="button"
+            class="btn btn-success btn-sm"
+            (click)="initGame()"
+            [disabled]="playerInputPositions.length"
+            [ngStyle]="{'cursor': !playerInputPositions.length ? 'pointer' : 'not-allowed'}">
+      Start game!
+    </button>
+    <button type="button"
+            class="btn btn-danger btn-sm"
+            (click)="resetGame()"
+            [disabled]="!playerInputPositions.length"
+            [ngStyle]="{'cursor': playerInputPositions.length ? 'pointer' : 'not-allowed', 'margin-left': '10px'}">
+      Reset game!
+    </button>
+  </div>
+</div>
+
+<div *ngIf="playerInputPositions.length" class="row">
+  <div class="col-md-3 d-flex justify-content-center">
+    <div class="layout-matrix">
+      <div class="cell" *ngFor="let player of playerInputPositions; let i = index" (click)="onPlayerInput(i)">
+        {{ player === "Player 1" ? "X" : player === "Player 2" ? "O" : "" }}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-7 d-flex justify-content-center">
+    <h3 *ngIf="!gameResultText; else gameOutcomeText">
+      {{ (activePlayer === PLAYER_2 && isUserPlayingAgainstComputer) ? 'Computer' : (activePlayer === PLAYER_1 && isUserPlayingAgainstComputer ? 'Your' : activePlayer) }} turn!</h3>
+    <ng-template #gameOutcomeText><h3>{{ gameResultText }}</h3></ng-template>
+  </div>
+</div>
+
+

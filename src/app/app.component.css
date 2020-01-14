@@ -1,0 +1,20 @@
+.layout-matrix {
+	display: grid;
+	grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+	width: 200px;
+	height: 200px;
+  color: #dddddd;
+  background-color: #2d2a2a;
+  border: 2px solid #000;
+  border-radius: 5px;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #000;
+  border-radius: 2px;
+  font: bold 2em 'Comic Sans MS';
+}
+
